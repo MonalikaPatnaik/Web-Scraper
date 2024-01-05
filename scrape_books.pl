@@ -16,12 +16,18 @@ my $tree = HTML::TreeBuilder::XPath->new_from_content($mech->content);
 # Use XPath to extract information
 my @titles = $tree->findvalues('//h3/a/@title');
 my @prices = $tree->findvalues('//p[@class="price_color"]');
+my @ratings = $tree->findvalues('//p[@class="star-rating"]/attribute::class');
+my @availability = $tree->findvalues('//p[@class="instock availability"]/text()');
 
-# Print the titles of the book along with their prices
+# Print the details of the books
 for my $i (0 .. $#titles) {
     my $title = $titles[$i];
     my $price = $prices[$i];
-    print "Title: $title\nPrice: $price\n\n";
+    my ($rating) = $ratings[$i] =~ /star-rating ([\w-]+)/;
+    my $availability = $availability[$i];
+    
+    print "Title: $title\nPrice: $price\nRating: $rating\nAvailability: $availability\n\n";
 }
+
 # Clean up
 $tree->delete;
